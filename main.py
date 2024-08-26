@@ -1,6 +1,6 @@
 from typing import Union
 from fastapi import FastAPI
-from vertex_ai import promp_ai
+from vertex_ai import prompt_ai
 
 app = FastAPI()
 
@@ -12,5 +12,5 @@ def read_root():
 
 @app.get("/Jidrid_ai")
 def prom_jidrid(promp = ""):
-    result = promp_ai(promp)
+    result = prompt_ai(promp)
     return result

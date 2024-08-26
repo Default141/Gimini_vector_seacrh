@@ -122,10 +122,10 @@ def prompt_ai(query, model_name="gemini-1.5-pro-001", session_id="", user_name="
     )
 
     retriever = bq_vector_datasource.as_retriever(search_type="mmr", search_kwargs={"k": 1000, "fetch_k": 1000})
-    retrieved_documents = batch_retrieval_with_fetch_k(retriever, query, batch_size=1000, fetch_k=1000, num_batches=10)
+    # retrieved_documents = batch_retrieval_with_fetch_k(retriever, query, batch_size=1000, fetch_k=1000, num_batches=10)
 
     # Convert the retrieved documents into a format expected by the question_answer_chain
-    documents = [doc.page_content for doc in retrieved_documents]
+    # documents = [doc.page_content for doc in retrieved_documents]
 
     history_aware_retriever = create_history_aware_retriever(llm, retriever, prompt)
     question_answer_chain = create_stuff_documents_chain(llm, prompt)
@@ -141,7 +141,8 @@ def prompt_ai(query, model_name="gemini-1.5-pro-001", session_id="", user_name="
     )
 
     result = conversational_rag_chain.invoke(
-        {"input": query, "context": context, "user_name": user_name, "documents": documents},
+        {"input": query, "context": context, "user_name": user_name},
+        # {"input": query, "context": context, "user_name": user_name, "documents": documents},
         config={"configurable": {"session_id": session_id}},
     )
     answer = result.get("answer", "No answer found.")
