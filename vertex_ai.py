@@ -16,7 +16,7 @@ DATASET = "companyData"
 TABLEEMBED = "Pre_Test_Order_Embedding"
 REGION = "asia-southeast1"
 # JSON_KEY_PATH = "credential/vertexAi.json"
-
+#
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = JSON_KEY_PATH
 
 embedding_model = VertexAIEmbeddings(
@@ -47,6 +47,8 @@ def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6, fi
             Do not mad up match data if it over your capability just inform user that
 
             just keep conversation natural but short you here to assist with data order Lottery problem
+            
+            Inform user about delay answer
 
             answer ih thai
 
@@ -65,9 +67,10 @@ def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6, fi
 
             Using only provided information
 
-            Do not mad up match data if it over your capability just inform user that
+            Do not mad up data if it over your capability just inform user that
             Act like a human being and be able to talk with the user like normal. If you didn't ask about order lottery
             just keep conversation natural but short you here to assist with data order Lottery problem
+            Just Keep conversation consistent with information you have and what you answer
 
 
             answer ih thai
