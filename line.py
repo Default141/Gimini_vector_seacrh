@@ -64,4 +64,4 @@ def reply(intent, text, reply_token, id, disname, lotto_number, session):
     print(text)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0",port=8080)

@@ -15,9 +15,9 @@ PROJECT_ID = "solutions-data"
 DATASET = "companyData"
 TABLEEMBED = "Pre_Test_Order_Embedding"
 REGION = "asia-southeast1"
-JSON_KEY_PATH = "credential/vertexAi.json"
+# JSON_KEY_PATH = "credential/vertexAi.json"
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = JSON_KEY_PATH
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = JSON_KEY_PATH
 
 embedding_model = VertexAIEmbeddings(
     model_name="text-multilingual-embedding-002", project=PROJECT_ID
@@ -33,23 +33,23 @@ bq_vector_datasource = BigQueryVectorSearch(
 )
 
 # Function to configure AI settings
-def ai_config(model_name="gemini-1.5-pro-001", max_tokens=8192, max_retries=6, first_time=True):
+def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6, first_time=True):
     llm = ChatVertexAI(model_name=model_name, max_tokens=max_tokens, max_retries=max_retries)
     if first_time:
         config_prompt = """
             Hey there! I'm จิดริ้ด, your friendly AI assistant. 😊
-            
+
             user name: {user_name}
             Greet the user with their name the first time you talk to them and refer to them by their name throughout.
-            
+
             Using only provided information
-            
+
             Do not mad up match data if it over your capability just inform user that
-            
-            just keep conversation natural but short you here to assist with data engineer problem
-            
+
+            just keep conversation natural but short you here to assist with data order Lottery problem
+
             answer ih thai
-            
+
             Here’s the context I’ve got: {context}
         """
     else:
@@ -58,19 +58,20 @@ def ai_config(model_name="gemini-1.5-pro-001", max_tokens=8192, max_retries=6, f
             Context: {context}
             Input: {input}
             This is the context that you have discussed with the user before; use it as basic information to give the user an answer.
-            
-            
+
+
             User name: {user_name}
             You do not have to greet the user again.
-            
+
             Using only provided information
-            
+
             Do not mad up match data if it over your capability just inform user that
-            
-            just keep conversation natural but short you here to assist with data engineer problem
-            
+            Act like a human being and be able to talk with the user like normal. If you didn't ask about order lottery
+            just keep conversation natural but short you here to assist with data order Lottery problem
+
+
             answer ih thai
-            
+
             Refer to the user by their name.
         """
 
@@ -84,7 +85,7 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
     return store[session_id]
 
 # Function to batch retrieve results using fetch_k
-def batch_retrieval_with_fetch_k(retriever, query, batch_size=1000, fetch_k=2000, num_batches=10):
+def batch_retrieval_with_fetch_k(retriever, query, batch_size=100, fetch_k=200, num_batches=10):
     results = []
     for _ in range(num_batches):
         batch_results = retriever.get_relevant_documents(query, k=batch_size, fetch_k=fetch_k)
@@ -92,7 +93,7 @@ def batch_retrieval_with_fetch_k(retriever, query, batch_size=1000, fetch_k=2000
     return results
 
 # Function to prompt AI and retrieve results
-def prompt_ai(query, model_name="gemini-1.5-pro-001", session_id="", user_name="ลูกค้า", max_tokens=8192, max_retries=1000):
+def prompt_ai(query, model_name="gemini-1.5-pro-001", session_id="", user_name="ลูกค้า", max_tokens=512, max_retries=100):
 
     context = ""  # Initialize an empty context
     first_time = True
@@ -121,7 +122,7 @@ def prompt_ai(query, model_name="gemini-1.5-pro-001", session_id="", user_name="
         ]
     )
 
-    retriever = bq_vector_datasource.as_retriever(search_type="mmr", search_kwargs={"k": 1000, "fetch_k": 1000})
+    retriever = bq_vector_datasource.as_retriever(search_type="mmr", search_kwargs={"k": 100, "fetch_k": 100})
     # retrieved_documents = batch_retrieval_with_fetch_k(retriever, query, batch_size=1000, fetch_k=1000, num_batches=10)
 
     # Convert the retrieved documents into a format expected by the question_answer_chain
