@@ -13,11 +13,11 @@ from langchain_core.chat_history import BaseChatMessageHistory
 # Project and environment settings
 PROJECT_ID = "solutions-data"
 DATASET = "companyData"
-TABLEEMBED = "Pre_Test_Order_Embedding"
+TABLEEMBED = "order_em"
 REGION = "asia-southeast1"
-# JSON_KEY_PATH = "credential/vertexAi.json"
+JSON_KEY_PATH = "credential/vertexAi.json"
 
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = JSON_KEY_PATH
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = JSON_KEY_PATH
 
 embedding_model = VertexAIEmbeddings(
     model_name="text-multilingual-embedding-002", project=PROJECT_ID
@@ -33,47 +33,30 @@ bq_vector_datasource = BigQueryVectorSearch(
 )
 
 # Function to configure AI settings
-def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6, first_time=True):
+def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6):
     llm = ChatVertexAI(model_name=model_name, max_tokens=max_tokens, max_retries=max_retries)
-    if first_time:
-        config_prompt = """
-            Hey there! I'm จิดริ้ด, your friendly AI assistant. 😊
-
-            user name: {user_name}
-            Greet the user with their name the first time you talk to them and refer to them by their name throughout.
-
-            Using only provided information
-
-            Do not mad up match data if it over your capability just inform user that
-
-            just keep conversation natural but short you here to assist with data order Lottery problem
-
-            answer ih thai
-
-            Here’s the context I’ve got: {context}
-        """
-    else:
-        config_prompt = """
-            You are จิดริ้ด, a friendly AI assistant. 😊
-            Context: {context}
-            Input: {input}
-            This is the context that you have discussed with the user before; use it as basic information to give the user an answer.
+    config_prompt = """
+        You are จิดริ้ด, a friendly AI assistant. 😊
+        Context: {context}
+        Input: {input}
+        This is the context that you have discussed with the user before; use it as basic information to give the user an answer.
 
 
-            User name: {user_name}
-            You do not have to greet the user again.
+        User name: {user_name}
+        You do not have to greet the user again.
 
-            Using only provided information
+        Using only provided information
 
-            Do not mad up match data if it over your capability just inform user that
-            Act like a human being and be able to talk with the user like normal. If you didn't ask about order lottery
-            just keep conversation natural but short you here to assist with data order Lottery problem
+        Do not mad up match data if it over your capability just inform user that
+        Act like a human being and be able to talk with the user like normal. If you didn't ask about order lottery
+        Counting lottery numbers Count the numbers according to the numbers sent out. Don't make a mistake.
+        just keep conversation natural but short you here to assist with data order Lottery problem
 
 
-            answer ih thai
+        answer ih thai
 
-            Refer to the user by their name.
-        """
+        Refer to the user by their name.
+    """
 
     return config_prompt, llm
 
@@ -110,9 +93,9 @@ def prompt_ai(query, model_name="gemini-1.5-pro-001", session_id="", user_name="
 
     # Debug context construction
     print(f"Constructed context: {context}")
-    print(f"First time: {first_time}")
+    # print(f"First time: {first_time}")
 
-    system_prompt, llm = ai_config(model_name, max_tokens, max_retries, first_time)
+    system_prompt, llm = ai_config(model_name, max_tokens, max_retries)
 
     prompt = ChatPromptTemplate.from_messages(
         [
