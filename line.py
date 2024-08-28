@@ -9,7 +9,6 @@ app = Flask(__name__)
 
 
 
-
 @app.route("/healthz", methods=['GET'])
 def health_check():
     return "health check"

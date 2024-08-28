@@ -15,9 +15,11 @@ PROJECT_ID = "solutions-data"
 DATASET = "companyData"
 TABLEEMBED = "order_em"
 REGION = "asia-southeast1"
+
 JSON_KEY_PATH = "credential/vertexAi.json"
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = JSON_KEY_PATH
+
 
 embedding_model = VertexAIEmbeddings(
     model_name="text-multilingual-embedding-002", project=PROJECT_ID
@@ -35,6 +37,8 @@ bq_vector_datasource = BigQueryVectorSearch(
 # Function to configure AI settings
 def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6):
     llm = ChatVertexAI(model_name=model_name, max_tokens=max_tokens, max_retries=max_retries)
+
+
     config_prompt = """
         You are จิดริ้ด, a friendly AI assistant. 😊
         Context: {context}
@@ -46,11 +50,11 @@ def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6):
         You do not have to greet the user again.
 
         Using only provided information
-
         Do not mad up match data if it over your capability just inform user that
         Act like a human being and be able to talk with the user like normal. If you didn't ask about order lottery
         Counting lottery numbers Count the numbers according to the numbers sent out. Don't make a mistake.
         just keep conversation natural but short you here to assist with data order Lottery problem
+
 
 
         answer ih thai
