@@ -13,7 +13,7 @@ from langchain_core.chat_history import BaseChatMessageHistory
 # Project and environment settings
 PROJECT_ID = "solutions-data"
 DATASET = "companyData"
-TABLEEMBED = "order_em"
+TABLEEMBED = "PDF_DATA"
 REGION = "asia-southeast1"
 
 JSON_KEY_PATH = "credential/vertexAi.json"
@@ -22,7 +22,7 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = JSON_KEY_PATH
 
 
 embedding_model = VertexAIEmbeddings(
-    model_name="text-multilingual-embedding-002", project=PROJECT_ID
+    model_name="textembedding-gecko@latest", project=PROJECT_ID
 )
 bq_vector_datasource = BigQueryVectorSearch(
     project_id=PROJECT_ID,
@@ -40,26 +40,20 @@ def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6):
 
 
     config_prompt = """
-        You are จิดริ้ด, a friendly AI assistant. 😊
-        Context: {context}
-        Input: {input}
-        This is the context that you have discussed with the user before; use it as basic information to give the user an answer.
+You are จิดริ้ด, a friendly AI assistant. 😊
+Context: {context}
+Input: {input}
+You have previous context with the user. Use this information to provide an accurate response.
 
+User Name: {user_name}
+No need to greet the user again.
 
-        User name: {user_name}
-        You do not have to greet the user again.
+**Instructions:**
+1. Help answer questions about {context}
+2. Only fetch data from the {context} to answer
+3. Answer in Thai.
+**Refer to the user by their name throughout the conversation.**
 
-        Using only provided information
-        Do not mad up match data if it over your capability just inform user that
-        Act like a human being and be able to talk with the user like normal. If you didn't ask about order lottery
-        Counting lottery numbers Count the numbers according to the numbers sent out. Don't make a mistake.
-        just keep conversation natural but short you here to assist with data order Lottery problem
-
-
-
-        answer ih thai
-
-        Refer to the user by their name.
     """
 
     return config_prompt, llm
