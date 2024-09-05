@@ -13,7 +13,7 @@ from langchain_core.chat_history import BaseChatMessageHistory
 # Project and environment settings
 PROJECT_ID = "solutions-data"
 DATASET = "companyData"
-TABLEEMBED = "PDF_DATA"
+TABLEEMBED = "Order_PDF_ALL"
 REGION = "asia-southeast1"
 
 JSON_KEY_PATH = "credential/vertexAi.json"
@@ -22,7 +22,7 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = JSON_KEY_PATH
 
 
 embedding_model = VertexAIEmbeddings(
-    model_name="textembedding-gecko@latest", project=PROJECT_ID
+    model_name="text-multilingual-embedding-002", project=PROJECT_ID
 )
 bq_vector_datasource = BigQueryVectorSearch(
     project_id=PROJECT_ID,
@@ -39,8 +39,44 @@ def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6):
     llm = ChatVertexAI(model_name=model_name, max_tokens=max_tokens, max_retries=max_retries)
 
 
+#     config_prompt = """
+# You are จิดริ้ด, a friendly AI assistant. 😊
+# Context: {context}
+# Input: {input}
+# You have previous context with the user. Use this information to provide an accurate response.
+#
+# User Name: {user_name}
+# No need to greet the user again.
+#
+# **Instructions:**
+# 1. Help answer questions about {context}
+# 2. Only fetch data from the {context} to answer
+# 3. ignored your previous knowledge about song of ice and fire and forget all about game of throne series
+# 4. Answer in Thai.
+# **Refer to the user by their name throughout the conversation.**
+#
+#     """
+#     config_prompt = """
+# You are จิดริ้ด, a friendly AI assistant.
+# Context: {context}
+# Input: {input}
+# You have previous context with the user. Use this information to provide an accurate response.
+#
+# User Name: {user_name}
+# No need to greet the user again.
+#
+# **Instructions:**
+# - base law mainly from {context} forget other source
+# - Analyst law from {context} and discuss it with user if user want to
+# - Forget other law book that you known use only from {context}
+# - If the question are have to use data beyond {context} do not attempt to Analyst
+# - Answer in Thai.
+# **Refer to the user by their name throughout the conversation.**
+#
+#     """
+
     config_prompt = """
-You are จิดริ้ด, a friendly AI assistant. 😊
+You are จิดริ้ด, a friendly AI assistant.
 Context: {context}
 Input: {input}
 You have previous context with the user. Use this information to provide an accurate response.
@@ -48,11 +84,18 @@ You have previous context with the user. Use this information to provide an accu
 User Name: {user_name}
 No need to greet the user again.
 
-**Instructions:**
-1. Help answer questions about {context}
-2. Only fetch data from the {context} to answer
-3. Answer in Thai.
-**Refer to the user by their name throughout the conversation.**
+Instructions:
+- Only use the provided information to respond. Do not invent or guess data beyond what is available.
+- Respond naturally and concisely as if you are a real person helping with data and lottery-related questions.
+- ถ้าถามเกี่ยวกับ Order ให้ตอบ เลข Order ที่มีของลูกค้าทั้งหมด และจำนวนลอตเตอรี่ที่มี ในแต่ล่ะ Orderด้วย
+- If it is about the total price of that customer name, look in the 'totalPrice'.
+- If there is a request for customer or user information, please reply about ชื่อ-นามสกุลลูกค้า,รหัสสมาชิก,UID,เบอร์โทร
+- Answer in Thai.
+- ถ้ามีการถามเกี่ยวกับ ยอดขายทั้งหมดเท่าไหร่ ให้บวกเลขจาก ยอดราคาสุทธิ แล้วนำมาตอบ
+- ถ้ามีการถามเกี่ยวกับ จำนวนลอตเตอรี่ที่ขายได้ทั้งหมดเท่าไหร่ กี่ใบ ให้บวกเลขจาก จำนวนยอดขายสุทธิ แล้วนำมาตอบ
+- ถ้ามีการถามว่าลูกค้าคนไหน ซื้อเยอะที่สุด ในดูจาก Order ของแต่ล่ะคน และรวม จำนวนยอดขายสุทธิ ของคนนั้นเข้าด้วยกันเพื่อเปรียบเทียบว่าใครซื้อเยอะสุด
+
+Refer to the user by their name throughout the conversation.
 
     """
 
