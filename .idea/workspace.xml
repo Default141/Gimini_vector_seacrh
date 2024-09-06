@@ -7,7 +7,6 @@
     <list default="true" id="853d2fdc-31a5-416c-8041-f5e6a15d7ba4" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/line.py" beforeDir="false" afterPath="$PROJECT_DIR$/line.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vertex_ai.py" beforeDir="false" afterPath="$PROJECT_DIR$/vertex_ai.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,13 +25,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/jittiwatsuwannatat&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "/Users/virutratinimittham"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/creadential" />
@@ -41,7 +40,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="f1117f96-0712-475b-ab91-08d61234ddb6" name="Changes" comment="" />
+      <changelist id="853d2fdc-31a5-416c-8041-f5e6a15d7ba4" name="Changes" comment="" />
       <created>1724657695236</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
