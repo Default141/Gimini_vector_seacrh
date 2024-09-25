@@ -31,11 +31,10 @@ bq_vector_datasource = BigQueryVectorSearch(
     location=REGION,
     embedding=embedding_model,
     content_field="text",
-    text_embedding_field="embedding"
 )
 
 # Function to configure AI settings
-def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6):
+def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=100):
     llm = ChatVertexAI(model_name=model_name, max_tokens=max_tokens, max_retries=max_retries)
 
 
@@ -76,7 +75,7 @@ def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=6):
 #     """
 
     config_prompt = """
-You are จิดริ้ด, a friendly AI assistant.
+You are หมูตู, a friendly AI assistant. 😊
 Context: {context}
 Input: {input}
 You have previous context with the user. Use this information to provide an accurate response.
@@ -84,18 +83,13 @@ You have previous context with the user. Use this information to provide an accu
 User Name: {user_name}
 No need to greet the user again.
 
-Instructions:
-- Only use the provided information to respond. Do not invent or guess data beyond what is available.
-- Respond naturally and concisely as if you are a real person helping with data and lottery-related questions.
-- ถ้าถามเกี่ยวกับ Order ให้ตอบ เลข Order ที่มีของลูกค้าทั้งหมด และจำนวนลอตเตอรี่ที่มี ในแต่ล่ะ Orderด้วย
-- If it is about the total price of that customer name, look in the 'totalPrice'.
-- If there is a request for customer or user information, please reply about ชื่อ-นามสกุลลูกค้า,รหัสสมาชิก,UID,เบอร์โทร
-- Answer in Thai.
-- ถ้ามีการถามเกี่ยวกับ ยอดขายทั้งหมดเท่าไหร่ ให้บวกเลขจาก ยอดราคาสุทธิ แล้วนำมาตอบ
-- ถ้ามีการถามเกี่ยวกับ จำนวนลอตเตอรี่ที่ขายได้ทั้งหมดเท่าไหร่ กี่ใบ ให้บวกเลขจาก จำนวนยอดขายสุทธิ แล้วนำมาตอบ
-- ถ้ามีการถามว่าลูกค้าคนไหน ซื้อเยอะที่สุด ในดูจาก Order ของแต่ล่ะคน และรวม จำนวนยอดขายสุทธิ ของคนนั้นเข้าด้วยกันเพื่อเปรียบเทียบว่าใครซื้อเยอะสุด
+**Instructions:**
+-ถ้ามีการถามเกี่ยวกับเรื่องความฝัน ทำนายฝัน ให้ดึงข้อมูลมาจาก {context} เพื่อตอบคำถาม user ให้เลขนำโชคแค่ 2 ตัวพอ
+    Example: User says: ฉันฝันเห็นงู
+    Output: ถ้าฝันเห็นงูนั้นหมายถีง คุณอาจจะเจอเนื้่อคู่ เลขนำโชคคือ 00, 31
+-ถ้าไม่รู้ หรือหาข่้อมูลไม่เจอให้ตอบว่า 'ยังไม่มีข้อมูลในขณะนี้'
 
-Refer to the user by their name throughout the conversation.
+**Refer to the user by their name throughout the conversation.**
 
     """
 
@@ -109,7 +103,7 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
     return store[session_id]
 
 # Function to batch retrieve results using fetch_k
-def batch_retrieval_with_fetch_k(retriever, query, batch_size=100, fetch_k=200, num_batches=10):
+def batch_retrieval_with_fetch_k(retriever, query, batch_size=100, fetch_k=200, num_batches=100):
     results = []
     for _ in range(num_batches):
         batch_results = retriever.get_relevant_documents(query, k=batch_size, fetch_k=fetch_k)
@@ -146,7 +140,7 @@ def prompt_ai(query, model_name="gemini-1.5-pro-001", session_id="", user_name="
         ]
     )
 
-    retriever = bq_vector_datasource.as_retriever(search_type="mmr", search_kwargs={"k": 100, "fetch_k": 100})
+    retriever = bq_vector_datasource.as_retriever(search_type="mmr", search_kwargs={"k": 50, "fetch_k": 100})
     # retrieved_documents = batch_retrieval_with_fetch_k(retriever, query, batch_size=1000, fetch_k=1000, num_batches=10)
 
     # Convert the retrieved documents into a format expected by the question_answer_chain
