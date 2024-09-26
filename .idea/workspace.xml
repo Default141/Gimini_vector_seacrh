@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="853d2fdc-31a5-416c-8041-f5e6a15d7ba4" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/line.py" beforeDir="false" afterPath="$PROJECT_DIR$/line.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vertex_ai.py" beforeDir="false" afterPath="$PROJECT_DIR$/vertex_ai.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

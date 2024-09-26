@@ -13,7 +13,7 @@ from langchain_core.chat_history import BaseChatMessageHistory
 # Project and environment settings
 PROJECT_ID = "solutions-data"
 DATASET = "companyData"
-TABLEEMBED = "Order_PDF_ALL"
+TABLEEMBED = "Fortune_Telling"
 REGION = "asia-southeast1"
 
 JSON_KEY_PATH = "credential/vertexAi.json"
@@ -31,70 +31,35 @@ bq_vector_datasource = BigQueryVectorSearch(
     location=REGION,
     embedding=embedding_model,
     content_field="text",
+    text_embedding_field="embedding"
+
 )
 
 # Function to configure AI settings
 def ai_config(model_name="gemini-1.5-pro-001", max_tokens=512, max_retries=100):
     llm = ChatVertexAI(model_name=model_name, max_tokens=max_tokens, max_retries=max_retries)
 
-
-#     config_prompt = """
-# You are จิดริ้ด, a friendly AI assistant. 😊
-# Context: {context}
-# Input: {input}
-# You have previous context with the user. Use this information to provide an accurate response.
-#
-# User Name: {user_name}
-# No need to greet the user again.
-#
-# **Instructions:**
-# 1. Help answer questions about {context}
-# 2. Only fetch data from the {context} to answer
-# 3. ignored your previous knowledge about song of ice and fire and forget all about game of throne series
-# 4. Answer in Thai.
-# **Refer to the user by their name throughout the conversation.**
-#
-#     """
-#     config_prompt = """
-# You are จิดริ้ด, a friendly AI assistant.
-# Context: {context}
-# Input: {input}
-# You have previous context with the user. Use this information to provide an accurate response.
-#
-# User Name: {user_name}
-# No need to greet the user again.
-#
-# **Instructions:**
-# - base law mainly from {context} forget other source
-# - Analyst law from {context} and discuss it with user if user want to
-# - Forget other law book that you known use only from {context}
-# - If the question are have to use data beyond {context} do not attempt to Analyst
-# - Answer in Thai.
-# **Refer to the user by their name throughout the conversation.**
-#
-#     """
-
     config_prompt = """
-You are หมูตู, a friendly AI assistant. 😊
-Context: {context}
-Input: {input}
-You have previous context with the user. Use this information to provide an accurate response.
+      You are หมูตู, a friendly AI assistant. 😊
+    Context: {context}
+    Input: {input}
+    You have previous context with the user. Use this information to provide an accurate response.
 
-User Name: {user_name}
-No need to greet the user again.
+    User Name: {user_name}
+    No need to greet the user again.
 
-**Instructions:**
--ถ้ามีการถามเกี่ยวกับเรื่องความฝัน ทำนายฝัน ให้ดึงข้อมูลมาจาก {context} เพื่อตอบคำถาม user ให้เลขนำโชคแค่ 2 ตัวพอ
-    Example: User says: ฉันฝันเห็นงู
-    Output: ถ้าฝันเห็นงูนั้นหมายถีง คุณอาจจะเจอเนื้่อคู่ เลขนำโชคคือ 00, 31
--ถ้าไม่รู้ หรือหาข่้อมูลไม่เจอให้ตอบว่า 'ยังไม่มีข้อมูลในขณะนี้'
-
-**Refer to the user by their name throughout the conversation.**
+    **Instructions:**
+    -ถ้ามีการถามเกี่ยวกับเรื่องความฝัน ทำนายฝัน ให้ดึงข้อมูลมาจาก {context} เพื่อตอบคำถาม user
+        Example: User says: ฉันฝันเห็นงู
+        Output: ถ้าฝันเห็นงูนั้นหมายถีง คุณอาจจะเจอเนื้่อคู่ เลขนำโชคคือ 00, 31
+    -ถ้าข้อมมูลนั้นไม่ตรงกับ ข้อมูลใน {context} ให้ตัว หมูตู ทำนายฝันเองและ ให้เลขนำโชคเอง
+    -โดยให้แสดงความคิดเห็นไปในเชิงบวกเสมอ
+    **Refer to the user by their name throughout the conversation.**
 
     """
 
     return config_prompt, llm
-
+#
 # In-memory store for session history
 store = {}
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
@@ -140,7 +105,7 @@ def prompt_ai(query, model_name="gemini-1.5-pro-001", session_id="", user_name="
         ]
     )
 
-    retriever = bq_vector_datasource.as_retriever(search_type="mmr", search_kwargs={"k": 50, "fetch_k": 100})
+    retriever = bq_vector_datasource.as_retriever(search_type="mmr", search_kwargs={"k": 100, "fetch_k": 100})
     # retrieved_documents = batch_retrieval_with_fetch_k(retriever, query, batch_size=1000, fetch_k=1000, num_batches=10)
 
     # Convert the retrieved documents into a format expected by the question_answer_chain
@@ -149,7 +114,6 @@ def prompt_ai(query, model_name="gemini-1.5-pro-001", session_id="", user_name="
     history_aware_retriever = create_history_aware_retriever(llm, retriever, prompt)
     question_answer_chain = create_stuff_documents_chain(llm, prompt)
     chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
-
     # try:
     conversational_rag_chain = RunnableWithMessageHistory(
         chain,
@@ -164,12 +128,16 @@ def prompt_ai(query, model_name="gemini-1.5-pro-001", session_id="", user_name="
         # {"input": query, "context": context, "user_name": user_name, "documents": documents},
         config={"configurable": {"session_id": session_id}},
     )
+
+
     answer = result.get("answer", "No answer found.")
     # except Exception as e:
     #     print(f"Error during invocation: {e}")
     #     answer = "An error occurred."
 
     # Debug result
-    print(f"Result: {answer}")
-
+    # print(f"Result: {answer}")
+#
     return answer
+#
+
